@@ -15,12 +15,12 @@ Sample screenshots:
 
 #
 
-![](./home.PNG?raw=true "Home view")
+![](./home.png?raw=true "Home view")
 
 #
 
-![](./updste.PNG?raw=true "Edit view")
+![](./update.png?raw=true "Edit view")
 
 #
 
-![](./add.PNG?raw=true "Add view")
+![](./add.png?raw=true "Add view")
