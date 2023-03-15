@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "../../node_modules/axios/index";
 import Stack from "@mui/material/Stack";
 
+const { REACT_APP_API_URL } = process.env;
+
 const Create = () => {
   const [book, setBook] = useState({
     title: "",
@@ -16,7 +18,7 @@ const Create = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.post("http://localhost:8080/books", book).then(() => {
+    axios.post(`${REACT_APP_API_URL}`, book).then(() => {
       navigate("/");
     });
   };

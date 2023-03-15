@@ -6,6 +6,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "../../node_modules/axios/index";
 import Stack from "@mui/material/Stack";
 
+const { REACT_APP_API_URL } = process.env;
+
 const Update = () => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
@@ -14,7 +16,7 @@ const Update = () => {
   const { id } = useParams();
 
   useEffect(() => {
-    axios.get(`http://localhost:8080/books/${id}`).then((res) => {
+    axios.get(`${REACT_APP_API_URL}/${id}`).then((res) => {
       setTitle(res.data.title);
       setAuthor(res.data.author);
       setDescription(res.data.description);
@@ -31,7 +33,7 @@ const Update = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.put(`http://localhost:8080/books/${id}`, book).then(() => {
+    axios.put(`${REACT_APP_API_URL}/${id}`, book).then(() => {
       navigate("/");
     });
   };

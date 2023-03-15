@@ -17,6 +17,8 @@ import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import { Link } from "react-router-dom";
 
+const { REACT_APP_API_URL } = process.env;
+
 const BookList = () => {
   const [books, setBooks] = useState([]);
 
@@ -25,13 +27,13 @@ const BookList = () => {
   }, []);
 
   const getBooks = async () => {
-    axios.get(`http://localhost:8080/books`).then((res) => {
+    axios.get(`${REACT_APP_API_URL}`).then((res) => {
       setBooks(res.data);
     });
   };
 
   const deleteBook = async (id) => {
-    axios.delete(`http://localhost:8080/books/${id}`).then(() => {
+    axios.delete(`${REACT_APP_API_URL}/${id}`).then(() => {
       getBooks();
     });
   };
