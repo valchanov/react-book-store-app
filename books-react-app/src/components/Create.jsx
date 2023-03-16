@@ -13,7 +13,6 @@ const Create = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [hasResponse, setHasResponse] = useState(false);
 
   const isCreate = true;
   const [book, setBook] = useState({
