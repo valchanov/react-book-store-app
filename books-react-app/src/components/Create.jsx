@@ -10,33 +10,34 @@ import ModalDialog from "./ModalDialog";
 const { REACT_APP_API_URL } = process.env;
 
 const Create = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasResponse, setHasResponse] = useState(false);
+
+  const isCreate = true;
   const [book, setBook] = useState({
     title: "",
     author: "",
     description: "",
   });
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isError, setIsError] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-
   const handleOpen = () => setIsModalOpen(true);
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     handleOpen();
-    axios
-      .post(`${REACT_APP_API_URL}`, book)
-      .then(() => {
-        setIsLoading(false);
-      })
-      .catch(() => {
-        setIsError(true);
-        setIsLoading(false);
-      });
+    try {
+      await axios.post(`${REACT_APP_API_URL}`, book);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    } catch (error) {
+      setIsError(true);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleCancel = () => {
@@ -44,11 +45,6 @@ const Create = () => {
   };
 
   const handleClose = () => {
-    setIsModalOpen(false);
-    navigate("/");
-  };
-
-  const handleOk = () => {
     if (isError) {
       setIsModalOpen(false);
       setIsError(false);
@@ -139,7 +135,7 @@ const Create = () => {
         isLoading={isLoading}
         isError={isError}
         handleClose={handleClose}
-        handleOk={handleOk}
+        isCreate={isCreate}
       />
     </div>
   );

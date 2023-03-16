@@ -4,8 +4,6 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { Button } from "@mui/material";
 import { CircularProgress } from "@mui/material";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 const style = {
   position: "absolute",
@@ -24,8 +22,11 @@ const ModalDialog = ({
   isLoading,
   isError,
   handleClose,
-  handleOk,
+  isCreate,
 }) => {
+  const successMessage = isCreate
+    ? "Successfully added a new book!"
+    : "Book successfully updated!";
   return (
     <Modal
       open={isModalOpen}
@@ -44,12 +45,10 @@ const ModalDialog = ({
           component="h2"
         >
           {isLoading ? (
-            <h3>Loading</h3>
+            "Loading..."
           ) : (
             <Box>
-              {isError
-                ? "Oops, something went wrong!"
-                : "Successfully added a new book!"}
+              {isError ? "Oops, something went wrong!" : successMessage}
               <Box
                 style={{
                   display: "flex",
@@ -61,7 +60,7 @@ const ModalDialog = ({
                     marginTop: "20px",
                   }}
                   variant="contained"
-                  onClick={handleOk}
+                  onClick={handleClose}
                 >
                   OK
                 </Button>
@@ -70,7 +69,17 @@ const ModalDialog = ({
           )}
         </Typography>
 
-        {isLoading && <CircularProgress color="secondary" />}
+        {isLoading && (
+          <Box
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: "20px",
+            }}
+          >
+            <CircularProgress color="secondary" />
+          </Box>
+        )}
       </Box>
     </Modal>
   );

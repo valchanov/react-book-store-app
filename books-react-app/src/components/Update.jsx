@@ -1,13 +1,10 @@
-import React, { useEffect } from "react";
 import { Button, FormGroup } from "@mui/material";
+import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "../../node_modules/axios/index";
-import Stack from "@mui/material/Stack";
-import Modal from "@mui/material/Modal";
-import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
+import ModalDialog from "./ModalDialog";
 
 const style = {
   position: "absolute",
@@ -24,17 +21,17 @@ const style = {
 const { REACT_APP_API_URL } = process.env;
 
 const Update = () => {
+  const isCreate = false;
+
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [description, setDescription] = useState("");
+  const [isError, setIsError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { id } = useParams();
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => {
-    setOpen(false);
-    navigate("/");
-  };
+  const handleOpen = () => setIsModalOpen(true);
 
   useEffect(() => {
     axios.get(`${REACT_APP_API_URL}/${id}`).then((res) => {
@@ -52,15 +49,31 @@ const Update = () => {
     description,
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    axios.put(`${REACT_APP_API_URL}/${id}`, book).then(() => {
-      handleOpen();
-    });
+    setIsLoading(true);
+    handleOpen();
+    try {
+      await axios.put(`${REACT_APP_API_URL}/${id}`, book);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    } catch (error) {
+      setIsError(true);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleCancel = () => {
     navigate("/");
+  };
+
+  const handleClose = () => {
+    if (isError) {
+      setIsModalOpen(false);
+      setIsError(false);
+    } else {
+      navigate("/");
+    }
   };
 
   return (
@@ -73,7 +86,6 @@ const Update = () => {
     >
       <form
         style={{
-          // "& > :not(style)": { m: 1 },
           width: 400,
           maxWidth: "500%",
           height: "0",
@@ -143,43 +155,13 @@ const Update = () => {
         </FormGroup>
       </form>
 
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Typography
-            style={{
-              display: "flex",
-              justifyContent: "center",
-            }}
-            id="modal-modal-title"
-            variant="h6"
-            component="h2"
-          >
-            Successfully updated a book!
-          </Typography>
-          <Box
-            style={{
-              display: "flex",
-              justifyContent: "center",
-            }}
-          >
-            <Button
-              style={{
-                marginTop: "20px",
-              }}
-              variant="contained"
-              color="success"
-              onClick={() => navigate("/")}
-            >
-              OK
-            </Button>
-          </Box>
-        </Box>
-      </Modal>
+      <ModalDialog
+        isModalOpen={isModalOpen}
+        isLoading={isLoading}
+        isError={isError}
+        handleClose={handleClose}
+        isCreate={isCreate}
+      />
     </div>
   );
 };
