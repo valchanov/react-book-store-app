@@ -7,6 +7,7 @@ import Stack from "@mui/material/Stack";
 import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import { CircularProgress } from "@mui/material";
 
 const style = {
   position: "absolute",
@@ -30,6 +31,9 @@ const Create = () => {
   });
 
   const [open, setOpen] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
@@ -39,14 +43,30 @@ const Create = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.post(`${REACT_APP_API_URL}`, book).then(() => {
-      handleOpen();
-      //  navigate("/");
-    });
+    setIsLoading(true);
+    handleOpen();
+    axios
+      .post(`${REACT_APP_API_URL}`, book)
+      .then(() => {
+        setIsLoading(false);
+      })
+      .catch(() => {
+        setIsError(true);
+        setIsLoading(false);
+      });
   };
 
   const handleCancel = () => {
     navigate("/");
+  };
+
+  const handleOk = () => {
+    if (isError) {
+      setOpen(false);
+      setIsError(false);
+    } else {
+      navigate("/");
+    }
   };
 
   return (
@@ -126,7 +146,6 @@ const Create = () => {
           </div>
         </FormGroup>
       </form>
-
       <Modal
         open={open}
         onClose={handleClose}
@@ -143,25 +162,38 @@ const Create = () => {
             variant="h6"
             component="h2"
           >
-            Successfully added a new book!
+            {isLoading ? (
+              <h1>Loading</h1>
+            ) : (
+              <Box>
+                {isError ? (
+                  <p>Oops, Something went wrong!! </p>
+                ) : (
+                  <div>
+                    <p>Successfully added a new book! </p>
+                  </div>
+                )}
+                <Box
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Button
+                    style={{
+                      marginTop: "20px",
+                    }}
+                    variant="contained"
+                    onClick={handleOk}
+                  >
+                    OK
+                  </Button>
+                </Box>
+              </Box>
+            )}
           </Typography>
-          <Box
-            style={{
-              display: "flex",
-              justifyContent: "center",
-            }}
-          >
-            <Button
-              style={{
-                marginTop: "20px",
-              }}
-              variant="contained"
-              color="success"
-              onClick={() => navigate("/")}
-            >
-              OK
-            </Button>
-          </Box>
+
+          {isLoading && <CircularProgress color="secondary" />}
         </Box>
       </Modal>
     </div>
